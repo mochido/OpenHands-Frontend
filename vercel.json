@@ -1,8 +1,9 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "build",
+  "framework": "vite",
   "installCommand": "npm install",
-  "framework": null,
+  "devCommand": "npm run dev",
   "rewrites": [
     {
       "source": "/(.*)",
@@ -21,8 +22,9 @@
     }
   ],
   "env": {
-    "VITE_BACKEND_HOST": "@vite_backend_host",
-    "VITE_USE_TLS": "@vite_use_tls",
-    "VITE_MOCK_API": "@vite_mock_api"
+    "VITE_BACKEND_HOST": "@backend_host",
+    "VITE_USE_TLS": "@use_tls",
+    "VITE_FRONTEND_PORT": "3001",
+    "VITE_MOCK_API": "@mock_api"
   }
 }

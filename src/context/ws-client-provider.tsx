@@ -317,27 +317,23 @@ export function WsClientProvider({
       session_api_key: conversation.session_api_key, // Have to set here because socketio doesn't support custom headers. :(
     };
 
-    // Determine WebSocket URL based on environment
+    // Get WebSocket URL based on environment
     let baseUrl = null;
     if (conversation.url && !conversation.url.startsWith("/")) {
       baseUrl = new URL(conversation.url).host;
+    } else if (import.meta.env.VITE_BACKEND_HOST) {
+      // For production deployment
+      const protocol = import.meta.env.VITE_USE_TLS === 'true' ? 'https' : 'http';
+      baseUrl = `${protocol}://${import.meta.env.VITE_BACKEND_HOST}`;
     } else {
-      const backendHost = import.meta.env.VITE_BACKEND_HOST;
-      const useTLS = import.meta.env.VITE_USE_TLS === 'true';
-      
-      if (backendHost) {
-        const protocol = useTLS ? 'wss' : 'ws';
-        baseUrl = `${protocol}://${backendHost}`;
-      } else {
-        baseUrl = import.meta.env.VITE_BACKEND_BASE_URL || window?.location.host;
-      }
+      baseUrl = import.meta.env.VITE_BACKEND_BASE_URL || window?.location.host;
     }
 
     sio = io(baseUrl, {
       transports: ["websocket", "polling"], // Add polling as fallback
       query,
-      forceNew: true,
       timeout: 20000,
+      forceNew: true,
     });
     sio.on("connect", handleConnect);
     sio.on("oh_event", handleMessage);

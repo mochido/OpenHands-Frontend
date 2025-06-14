@@ -1,21 +1,27 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 
-// Determine backend URL based on environment
+// Get backend URL from environment variables
 const getBackendURL = () => {
-  const backendHost = import.meta.env.VITE_BACKEND_HOST;
-  const useTLS = import.meta.env.VITE_USE_TLS === 'true';
-  
-  if (backendHost) {
-    const protocol = useTLS ? 'https' : 'http';
-    return `${protocol}://${backendHost}`;
+  // For production deployment
+  if (import.meta.env.VITE_BACKEND_HOST) {
+    const protocol = import.meta.env.VITE_USE_TLS === 'true' ? 'https' : 'http';
+    return `${protocol}://${import.meta.env.VITE_BACKEND_HOST}`;
   }
   
-  // Fallback to current host for development
-  return `${window.location.protocol}//${import.meta.env.VITE_BACKEND_BASE_URL || window?.location.host}`;
+  // For development or when VITE_BACKEND_BASE_URL is set
+  if (import.meta.env.VITE_BACKEND_BASE_URL) {
+    return `${window.location.protocol}//${import.meta.env.VITE_BACKEND_BASE_URL}`;
+  }
+  
+  // Fallback to same host (for development)
+  return `${window.location.protocol}//${window?.location.host}`;
+}
 };
 
 export const openHands = axios.create({
   baseURL: getBackendURL(),
+  timeout: 30000, // 30 seconds timeout
+  withCredentials: false, // Set to true if you need cookies
 });
 
 // Helper function to check if a response contains an email verification error
