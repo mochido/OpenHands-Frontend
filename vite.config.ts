@@ -8,12 +8,13 @@ import { configDefaults } from "vitest/config";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd());
   const {
     VITE_BACKEND_HOST = "127.0.0.1:3000",
     VITE_USE_TLS = "false",
     VITE_FRONTEND_PORT = "3001",
     VITE_INSECURE_SKIP_VERIFY = "false",
-  } = loadEnv(mode, process.cwd());
+  } = env;
 
   const USE_TLS = VITE_USE_TLS === "true";
   const INSECURE_SKIP_VERIFY = VITE_INSECURE_SKIP_VERIFY === "true";
@@ -31,6 +32,25 @@ export default defineConfig(({ mode }) => {
       svgr(),
       tailwindcss(),
     ],
+    build: {
+      outDir: "build",
+      sourcemap: mode === "development",
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ["react", "react-dom"],
+            router: ["react-router"],
+            ui: ["@heroui/react"],
+            editor: ["@monaco-editor/react", "monaco-editor"],
+          },
+        },
+      },
+    },
+    define: {
+      // Ensure environment variables are available at build time
+      __VITE_BACKEND_HOST__: JSON.stringify(env.VITE_BACKEND_HOST),
+      __VITE_USE_TLS__: JSON.stringify(env.VITE_USE_TLS),
+    },
     server: {
       port: FE_PORT,
       host: true,
