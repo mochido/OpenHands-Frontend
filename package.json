@@ -71,7 +71,9 @@
     "prepare": "cd .. && husky frontend/.husky",
     "typecheck": "react-router typegen && tsc",
     "check-unlocalized-strings": "node scripts/check-unlocalized-strings.cjs",
-    "check-translation-completeness": "node scripts/check-translation-completeness.cjs"
+    "check-translation-completeness": "node scripts/check-translation-completeness.cjs",
+    "deploy-setup": "node scripts/deploy-setup.js",
+    "clean": "rm -rf node_modules package-lock.json build dist"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx,js}": [
