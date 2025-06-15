@@ -15,7 +15,6 @@ const getBackendURL = () => {
   
   // Fallback to same host (for development)
   return `${window.location.protocol}//${window?.location.host}`;
-}
 };
 
 export const openHands = axios.create({

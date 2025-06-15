@@ -7,6 +7,7 @@ import { setInitialPrompt } from "#/state/initial-query-slice";
 import { RootState } from "#/store";
 import { GitRepository } from "#/types/git";
 import { SuggestedTask } from "#/components/features/home/tasks/task.types";
+import { extractBase64FromDataUrl } from "#/utils/convert-image-to-base-64";
 
 export const useCreateConversation = () => {
   const navigate = useNavigate();
@@ -27,6 +28,9 @@ export const useCreateConversation = () => {
     }) => {
       if (variables.q) dispatch(setInitialPrompt(variables.q));
 
+      // Convert data URLs to pure base64 for API
+      const imageUrls = files.map(extractBase64FromDataUrl);
+      
       return OpenHands.createConversation(
         variables.selectedRepository
           ? variables.selectedRepository.full_name
@@ -35,7 +39,7 @@ export const useCreateConversation = () => {
           ? variables.selectedRepository.git_provider
           : undefined,
         variables.q,
-        files,
+        imageUrls,
         replayJson || undefined,
         variables.suggested_task || undefined,
         variables.selected_branch,
