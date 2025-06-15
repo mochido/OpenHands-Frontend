@@ -66,7 +66,15 @@ export function ChatInterface() {
 
   const events = parsedEvents.filter(shouldRenderEvent);
 
-  const handleSendMessage = async (content: string, files: File[]) => {
+  const handleSendMessage = async (
+    content: string, 
+    files: File[], 
+    novelModeInfo?: {
+      isNovelMode: boolean;
+      originalPrompt?: string;
+      templateUsed?: string;
+    }
+  ) => {
     if (events.length === 0) {
       posthog.capture("initial_query_submitted", {
         entry_point: getEntryPoint(
@@ -88,7 +96,14 @@ export function ChatInterface() {
     const imageUrls = dataUrls.map(extractBase64FromDataUrl);
 
     const timestamp = new Date().toISOString();
-    send(createChatMessage(content, imageUrls, timestamp));
+    send(createChatMessage(
+      content, 
+      imageUrls, 
+      timestamp,
+      novelModeInfo?.isNovelMode,
+      novelModeInfo?.originalPrompt,
+      novelModeInfo?.templateUsed
+    ));
     setOptimisticUserMessage(content);
     setMessageToSend(null);
   };

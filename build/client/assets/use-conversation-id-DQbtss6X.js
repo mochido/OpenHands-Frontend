@@ -1,0 +1,1 @@
+import{b as o}from"./router-CPryua6o.js";function e(){const{conversationId:r}=o();if(!r)throw new Error("useConversationId must be used within a route that has a conversationId parameter");return{conversationId:r}}export{e as u};
