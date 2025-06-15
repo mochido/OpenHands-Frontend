@@ -2,7 +2,7 @@ import React from "react";
 import { BookOpen, Users, MessageCircle, Globe, Heart, Lightbulb } from "lucide-react";
 
 interface NovelQuickStartProps {
-  onPromptSelect: (prompt: string) => void;
+  onPromptSelect: (prompt: string, templateId?: string) => void;
 }
 
 const QUICK_START_PROMPTS = [
@@ -60,7 +60,7 @@ export function NovelQuickStart({ onPromptSelect }: NovelQuickStartProps) {
         {QUICK_START_PROMPTS.map((item) => (
           <button
             key={item.id}
-            onClick={() => onPromptSelect(item.prompt)}
+            onClick={() => onPromptSelect(item.prompt, item.id)}
             className="flex items-center gap-3 p-3 bg-gray-800 hover:bg-purple-800/30 rounded-lg transition-colors text-left group"
           >
             <div className="text-purple-400 group-hover:text-purple-300 transition-colors">

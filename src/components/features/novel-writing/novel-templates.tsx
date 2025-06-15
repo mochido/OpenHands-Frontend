@@ -190,7 +190,7 @@ Tolong berikan feedback yang specific, actionable, dan encouraging seperti profe
 ];
 
 interface NovelTemplatesProps {
-  onTemplateSelect: (prompt: string) => void;
+  onTemplateSelect: (prompt: string, templateId?: string) => void;
   onClose: () => void;
 }
 
@@ -213,7 +213,7 @@ export function NovelTemplates({ onTemplateSelect, onClose }: NovelTemplatesProp
     : NOVEL_TEMPLATES.filter(template => template.category === selectedCategory);
 
   const handleTemplateSelect = (template: NovelTemplate) => {
-    onTemplateSelect(template.prompt);
+    onTemplateSelect(template.prompt, template.id);
     onClose();
   };
 

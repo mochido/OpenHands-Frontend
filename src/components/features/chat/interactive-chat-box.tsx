@@ -17,7 +17,11 @@ import {
 interface InteractiveChatBoxProps {
   isDisabled?: boolean;
   mode?: "stop" | "submit";
-  onSubmit: (message: string, images: File[]) => void;
+  onSubmit: (message: string, images: File[], novelModeInfo?: {
+    isNovelMode: boolean;
+    originalPrompt?: string;
+    templateUsed?: string;
+  }) => void;
   onStop: () => void;
   value?: string;
   onChange?: (message: string) => void;
@@ -38,6 +42,8 @@ export function InteractiveChatBox({
   const [showNovelTemplates, setShowNovelTemplates] = React.useState(false);
   const [showQuickStart, setShowQuickStart] = React.useState(false);
   const [suggestedTemplate, setSuggestedTemplate] = React.useState<string | null>(null);
+  const [lastTemplateUsed, setLastTemplateUsed] = React.useState<string | null>(null);
+  const [originalPrompt, setOriginalPrompt] = React.useState<string>("");
 
   const handleUpload = (files: File[]) => {
     setImages((prevImages) => [...prevImages, ...files]);
@@ -54,15 +60,27 @@ export function InteractiveChatBox({
   const handleSubmit = (message: string) => {
     // Enhance prompt for novel writing mode
     const finalMessage = isNovelMode ? enhancePromptForNovel(message) : message;
-    onSubmit(finalMessage, images);
+    
+    // Prepare novel mode info
+    const novelModeInfo = isNovelMode ? {
+      isNovelMode: true,
+      originalPrompt: message !== finalMessage ? message : undefined,
+      templateUsed: lastTemplateUsed || undefined
+    } : undefined;
+    
+    onSubmit(finalMessage, images, novelModeInfo);
     setImages([]);
+    setLastTemplateUsed(null); // Reset after sending
     if (message) {
       onChange?.("");
     }
   };
 
-  const handleTemplateSelect = (prompt: string) => {
+  const handleTemplateSelect = (prompt: string, templateId?: string) => {
     onChange?.(prompt);
+    if (templateId) {
+      setLastTemplateUsed(templateId);
+    }
   };
 
   const handleNovelModeToggle = (novelMode: boolean) => {
